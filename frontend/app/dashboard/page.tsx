@@ -32,7 +32,8 @@ export default function DashboardPage() {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) {
-      router.push('/auth/login')
+      // Allow guest view without redirect
+      setIsLoading(false)
       return
     }
 
@@ -121,19 +122,28 @@ export default function DashboardPage() {
               <span className="ml-2 text-xl font-bold text-gray-900">UnBind</span>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <User className="h-5 w-5 text-gray-600" />
-                <span className="text-gray-700">
-                  {user?.first_name} {user?.last_name}
-                </span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-              >
-                <LogOut className="h-5 w-5" />
-                <span>Logout</span>
-              </button>
+              {user ? (
+                <>
+                  <div className="flex items-center space-x-2">
+                    <User className="h-5 w-5 text-gray-600" />
+                    <span className="text-gray-700">
+                      {user.first_name} {user.last_name}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                  >
+                    <LogOut className="h-5 w-5" />
+                    <span>Logout</span>
+                  </button>
+                </>
+              ) : (
+                <div className="flex items-center space-x-4">
+                  <Link href="/auth/login" className="text-gray-600 hover:text-gray-900">Login</Link>
+                  <Link href="/auth/signup" className="btn-primary">Get Started</Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

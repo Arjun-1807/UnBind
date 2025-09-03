@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from 'firebase/auth'
+import { app as firebaseApp } from '@/lib/firebase'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, FileText, Loader2 } from 'lucide-react'
@@ -143,10 +145,42 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const auth = getAuth(firebaseApp)
+                    const provider = new GoogleAuthProvider()
+                    const result = await signInWithPopup(auth, provider)
+                    const idToken = await result.user.getIdToken()
+                    localStorage.setItem('token', idToken)
+                    window.location.href = '/dashboard'
+                  } catch (e) {
+                    console.error(e)
+                    toast.error('Google sign-in failed')
+                  }
+                }}
+                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
                 Google
               </button>
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const auth = getAuth(firebaseApp)
+                    const provider = new GithubAuthProvider()
+                    const result = await signInWithPopup(auth, provider)
+                    const idToken = await result.user.getIdToken()
+                    localStorage.setItem('token', idToken)
+                    window.location.href = '/dashboard'
+                  } catch (e) {
+                    console.error(e)
+                    toast.error('GitHub sign-in failed')
+                  }
+                }}
+                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
                 GitHub
               </button>
             </div>
